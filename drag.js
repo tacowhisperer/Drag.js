@@ -1,10 +1,32 @@
+function appendTransform(element, transformFuncName, transformParameterString) {
+	const currTransformValue = element.style.transform;
+	const newValue = `${transformFuncName}(${transformParameterString})`;
+
+	if (currTransformValue === "") {
+		element.style.transform = newValue;
+		return;
+	}
+
+	const transReg = new RegExp(`^${transformFuncName}\\(.+\\)`);
+
+	// We need to replace the transformation value in the current transformation string.
+	if (currTransformValue.split(/\s+/).filter(transform => transform.match(transReg)).length == 1) {
+		element.style.transform = currTransformValue.replace(new RegExp(`${transformFuncName}\\(.+\\)`), newValue);
+		return;
+	}
+
+	// We need to append the new transformation.
+	element.style.transform += newValue;
+}
+
 /**
  * A handler for creating a draggable element.
  * 
  * Code adapted from:
  * https://www.kirupa.com/html5/drag.htm
  */
-function makeDraggable(container, element, onDragX = (xPos, e) => e.style.transform = `translateX(${xPos}px)`, onDragY = (yPos, e) => e.style.transform = `translateY(${yPos}px)`) {
+function makeDraggable(container, element, onDragX = (xPos, e) => appendTransform(e, "translateX", `${xPos}px`),
+	onDragY = (yPos, e) => appendTransform(e, "translateY", `${yPos}px`)) {
 	let active = false;
 
 	const current = {
@@ -56,7 +78,7 @@ function makeDraggable(container, element, onDragX = (xPos, e) => e.style.transf
 
 	function drag(e) {
 		if (active) {
-			e.preventDevault();
+			e.preventDefault();
 
 			switch(e.type) {
 				case "touchmove":
