@@ -27,8 +27,8 @@ function makeDraggable(element, options = {}) {
 		e.style.transform += newValue;
 	};
 
-	const onDragX = options.onDragX || (xPos, e) => appendTransform(e, "translateX", `${xPos}px`);
-	const onDragY = options.onDragY || (yPos, e) => appendTransform(e, "translateY", `${yPos}px`);	
+	const onDragX = options.onDragX || ((xPos, e) => appendTransform(e, "translateX", `${xPos}px`));
+	const onDragY = options.onDragY || ((yPos, e) => appendTransform(e, "translateY", `${yPos}px`));	
 
 	const container = options.container || document.body;
 
