@@ -1,32 +1,37 @@
-function appendTransform(element, transformFuncName, transformParameterString) {
-	const currTransformValue = element.style.transform;
-	const newValue = `${transformFuncName}(${transformParameterString})`;
-
-	if (currTransformValue === "") {
-		element.style.transform = newValue;
-		return;
-	}
-
-	const transReg = new RegExp(`^${transformFuncName}\\(.+\\)`);
-
-	// We need to replace the transformation value in the current transformation string.
-	if (currTransformValue.split(/\s+/).filter(transform => transform.match(transReg)).length == 1) {
-		element.style.transform = currTransformValue.replace(new RegExp(`${transformFuncName}\\(.+\\)`), newValue);
-		return;
-	}
-
-	// We need to append the new transformation.
-	element.style.transform += newValue;
-}
-
 /**
  * A handler for creating a draggable element.
  * 
  * Code adapted from:
  * https://www.kirupa.com/html5/drag.htm
  */
-function makeDraggable(container, element, onDragX = (xPos, e) => appendTransform(e, "translateX", `${xPos}px`),
-	onDragY = (yPos, e) => appendTransform(e, "translateY", `${yPos}px`)) {
+function makeDraggable(element, options) {
+
+	const appendTransform = (e, transformFuncName, transformParameterString) => {
+		const currTransformValue = e.style.transform;
+		const newValue = `${transformFuncName}(${transformParameterString})`;
+
+		if (currTransformValue === "") {
+			e.style.transform = newValue;
+			return;
+		}
+
+		const transReg = new RegExp(`^${transformFuncName}\\(.+\\)`);
+
+		// We need to replace the transformation value in the current transformation string.
+		if (currTransformValue.split(/\s+/).filter(transform => transform.match(transReg)).length == 1) {
+			e.style.transform = currTransformValue.replace(new RegExp(`${transformFuncName}\\(.+\\)`), newValue);
+			return;
+		}
+
+		// We need to append the new transformation.
+		e.style.transform += newValue;
+	};
+
+	const onDragX = options.onDragX || (xPos, e) => appendTransform(e, "translateX", `${xPos}px`);
+	const onDragY = options.onDragY || (yPos, e) => appendTransform(e, "translateY", `${yPos}px`);	
+
+	const container = options.container || document.body;
+
 	let active = false;
 
 	const current = {
@@ -65,7 +70,7 @@ function makeDraggable(container, element, onDragX = (xPos, e) => appendTransfor
 				break;
 		}
 
-		if (e.target === element)
+		if (element.contains(e.target))
 			active = true;
 	}
 
