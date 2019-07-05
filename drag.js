@@ -4,7 +4,7 @@
  * Code adapted from:
  * https://www.kirupa.com/html5/drag.htm
  */
-function makeDraggable(element, options) {
+function makeDraggable(element, options = {}) {
 
 	const appendTransform = (e, transformFuncName, transformParameterString) => {
 		const currTransformValue = e.style.transform;
